@@ -26,6 +26,7 @@ namespace API
                     // her  seferide database control edip eğer yen bir modül var ise oluşturacak 
                     var context = services.GetRequiredService<Datacontext>();
                     context.Database.Migrate();
+                    Seed.SeedData(context);
                 }
                 catch (Exception ex)
                 {

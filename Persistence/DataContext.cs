@@ -10,7 +10,7 @@ namespace Persistence
 
         }
         public DbSet<Value> Values { get; set; }
-
+        public DbSet<Activity> Activities { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             // bir kaç değer girmek için builder oluşturuyoruz
