@@ -34,6 +34,11 @@ const App = () => {
     setEditMode(false);
   }
 
+  const handleDeleteActivity = (activityId: string) => {
+    setActivities([...activities.filter(a => a.activityId !== activityId)])
+  }
+
+
   // Get ALl Activities
   useEffect(() => {
     axios.get<IActivity[]>('http://localhost:5000/api/activities')
@@ -64,6 +69,7 @@ const App = () => {
           setSelectedActivity={setSelectedActivity}
           createActivity={handleCreateActivity}
           editActivity={handleEditActivity}
+          deleteActivity={handleDeleteActivity}
         />
       </Container>
     </Fragment>
