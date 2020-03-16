@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { List, Container } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
 //import { cars } from './demo';
 //import { CarItem } from './CarItem';
 import axios from 'axios';
@@ -16,6 +16,7 @@ const App = () => {
 
   const handleSelectActivity = (activityId: string) => {
     setSelectedActivity(activities.filter(a => a.activityId === activityId)[0]);
+    setEditMode(false);
   };
   const handleOpenCreateForm = () => {
     setSelectedActivity(null);
@@ -37,7 +38,12 @@ const App = () => {
   useEffect(() => {
     axios.get<IActivity[]>('http://localhost:5000/api/activities')
       .then((response) => {
-        setActivities(response.data)
+        let activities: IActivity[] = [];
+        response.data.forEach(activity => {
+          activity.date = activity.date.split('.')[0];
+          activities.push(activity);
+        })
+        setActivities(activities)
       })
   }, []);
 

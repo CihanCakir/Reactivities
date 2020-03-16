@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, List, GridColumn } from 'semantic-ui-react'
+import { Grid } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
 import ActivityList from './ActivityList'
 import { ActivityDetails } from '../details/ActivityDetails'
@@ -25,6 +25,7 @@ export const ActivityDashboard: React.FC<IProps> = ({ activities, selectActivity
                 />)}
                 {editMode &&
                     <ActivityForm
+                        key={selectedActivity && selectedActivity.activityId || 0}
                         setEditMode={setEditMode}
                         activity={selectedActivity!}
                         createActivity={createActivity}
