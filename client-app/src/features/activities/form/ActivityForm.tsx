@@ -10,34 +10,40 @@ interface DetailParams {
     activityId: string;
 }
 
-const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match }) => {
+const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
     const activityStore = useContext(ActivityStore);
-    const { editActivity, createActivity, submitting, cancelFormOpen, activity: initialFormState, loadActivity } = activityStore;
+    const
+        {
+            clearActivity,
+            editActivity,
+            createActivity,
+            submitting,
+            activity: initialFormState,
+            loadActivity
+        } = activityStore;
 
-    useEffect(() => {
-        if (match.params.activityId) {
-            loadActivity(match.params.activityId)
-        }
+
+
+    ///  İS Working update refresh and still activity stand
+    const [activity, setActivity] = useState<IActivity>({
+        activityId: '',
+        title: '',
+        category: '',
+        description: '',
+        date: '',
+        city: '',
+        venue: ''
     });
 
-    const initializeForm = () => {
-        if (initialFormState) {
-            return initialFormState
-        } else {
-            return {
-                activityId: '',
-                title: '',
-                category: '',
-                description: '',
-                date: '',
-                city: '',
-                venue: ''
-            };
-        }
-    };
-    ///  İS Working update refresh and still activity stand
-    const [activity, setActivity] = useState<IActivity>(initializeForm);
 
+    useEffect(() => {
+        if (match.params.activityId && activity.activityId.length === 0) {
+            loadActivity(match.params.activityId).then(() => initialFormState && setActivity(initialFormState))
+        }
+        return (() => {
+            clearActivity()
+        })
+    }, [loadActivity, match.params.activityId, clearActivity, initialFormState, activity.activityId.length])
 
     const handleSubmit = () => {
         if (activity.activityId.length === 0) {
@@ -45,9 +51,9 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match }) =>
                 ...activity,
                 activityId: uuid()
             }
-            createActivity(newActivity);
+            createActivity(newActivity).then(() => history.push(`/activities/${newActivity.activityId}`));
         } else {
-            editActivity(activity);
+            editActivity(activity).then(() => history.push(`/activities/${activity.activityId}`));
         }
     };
 
@@ -66,7 +72,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({ match }) =>
                 <Form.Input onChange={handleInputChange} name='city' placeholder='City' value={activity.city} required />
                 <Form.Input onChange={handleInputChange} name='venue' placeholder='Venue' value={activity.venue} required />
                 <Button loading={submitting} floated='right' positive type='submit' content='Submit' />
-                <Button onClick={cancelFormOpen} floated='right' type='button' content='Cancel' />
+                <Button onClick={() => history.push(`/activities/${activity.activityId}`)} floated='right' type='button' content='Cancel' />
             </Form>
         </Segment>
     )

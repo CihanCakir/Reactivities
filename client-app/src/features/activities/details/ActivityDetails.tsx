@@ -16,10 +16,10 @@ interface DetailParams {
 // Router Componentprops router üzerinden params taşımaya yarar
 const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
     const activityStore = useContext(ActivityStore);
-    const { activity, openEditForm, cancelSelectedActivity, loadActivity, loadingInitial } = activityStore;
+    const { activity, loadActivity, loadingInitial } = activityStore;
     useEffect(() => {
         loadActivity(match.params.activityId)
-    }, [loadActivity])
+    }, [loadActivity, match.params.activityId])
 
 
     if (loadingInitial || !activity) return <LoadingComponent content='Loading Activity' />
@@ -40,7 +40,7 @@ const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, h
                 <Button.Group widths={2}>
 
 
-                    <Button as={Link} to={`/manage/${activity.activityId} `} basic color='blue' content='Edit' />
+                    <Button as={Link} to={`/manage/${activity.activityId}`} basic color='blue' content='Edit' />
                     <Button onClick={() => history.push('/activities')} basic color='grey' content='Cancel' />
                     {/* <Button onClick={() => history.goBack()} basic color='grey' content='Cancel' /> */}
                     {/* <Button onClick={cancelSelectedActivity} basic color='grey' content='Cancel' /> */}
