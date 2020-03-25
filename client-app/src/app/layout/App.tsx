@@ -1,27 +1,18 @@
 import React, { useEffect, Fragment, useContext } from 'react';
 import { Container } from 'semantic-ui-react';
-//import { cars } from './demo';
-//import { CarItem } from './CarItem';
-
 import NavBar from '../../features/nav/NavBar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
-
-
 import { LoadingComponent } from './LoadingComponent';
 import ActivityStore from '../stores/activityStore';
 import { observer } from 'mobx-react-lite';
+import { Route } from 'react-router-dom';
+import HomePage from '../../features/home/HomePage';
+import ActivityForm from '../../features/activities/form/ActivityForm';
+import ActivityDetails from '../../features/activities/details/ActivityDetails';
 
 const App = () => {
 
   const activityStore = useContext(ActivityStore);
-
-
-
-
-
-
-
-
 
   // Get ALl Activities
   useEffect(() => {
@@ -30,14 +21,16 @@ const App = () => {
 
   if (activityStore.loadingInitial) return <LoadingComponent content='loading Activities ...' />
 
-
-
-
   return (
     <Fragment>
       <NavBar />
       <Container style={{ marginTop: '7em' }}>
-        <ActivityDashboard />
+        <Route exact path='/' component={HomePage} />
+        <Route exact path='/activities' component={ActivityDashboard} />
+        <Route path='/activities/:activityId' component={ActivityDetails} />
+        {/* Eğer Ki bir route 2 işi bir component yapacaksa path dizi olarak tanımlanır aşağıda edit ve create aynı componentta olduğu  gibi */}
+        <Route path={['/createActivity', '/manage/:activityId']} component={ActivityForm} />
+
       </Container>
     </Fragment>
   );
