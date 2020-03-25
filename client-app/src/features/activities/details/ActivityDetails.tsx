@@ -4,6 +4,7 @@ import ActivityStore from '../../../app/stores/activityStore';
 import { observer } from 'mobx-react-lite';
 import { RouteComponentProps } from 'react-router';
 import { LoadingComponent } from '../../../app/layout/LoadingComponent';
+import { Link } from 'react-router-dom';
 
 // gönderilecek parametreden interface yapılır
 
@@ -39,7 +40,7 @@ const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, h
                 <Button.Group widths={2}>
 
 
-                    <Button onClick={() => openEditForm(activity!.activityId)} basic color='blue' content='Edit' />
+                    <Button as={Link} to={`/manage/${activity.activityId} `} basic color='blue' content='Edit' />
                     <Button onClick={() => history.push('/activities')} basic color='grey' content='Cancel' />
                     {/* <Button onClick={() => history.goBack()} basic color='grey' content='Cancel' /> */}
                     {/* <Button onClick={cancelSelectedActivity} basic color='grey' content='Cancel' /> */}
