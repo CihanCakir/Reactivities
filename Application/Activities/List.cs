@@ -24,22 +24,27 @@ namespace Application.Activities
             }
             public async Task<List<Activity>> Handle(Query request, CancellationToken cancellationToken)
             {
-                try
-                {
-                    // sistem Yoğunluğuna göre taskde cevap verme süresi eklettir yada rabbitmq/ Kafkayı burada kullan
-                    for (var i = 0; i < 10; i++)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        await Task.Delay(1000, cancellationToken);
-                        _logger.LogInformation($"Task {i} Has Completed");
-                    }
-                }
-                catch (Exception exception) when (exception is TaskCanceledException)
-                {
-                    _logger.LogInformation("Task was cancelled");
-                }
 
-                var activities = await _context.Activities.ToListAsync(cancellationToken);
+
+
+                var activities = await _context.Activities.ToListAsync();
+
+                // try
+                // {
+                //     // sistem Yoğunluğuna göre taskde cevap verme süresi eklettir yada rabbitmq/ Kafkayı burada kullan
+                //     for (var i = 0; i < 10; i++)
+                //     {
+                //         cancellationToken.ThrowIfCancellationRequested();
+                //         await Task.Delay(1000, cancellationToken);
+                //         _logger.LogInformation($"Task {i} Has Completed");
+                //     }
+                // }
+                // catch (Exception exception) when (exception is TaskCanceledException)
+                // {
+                //     _logger.LogInformation("Task was cancelled");
+                // }
+
+                // var activities = await _context.Activities.ToListAsync(cancellationToken);
 
                 return activities;
             }

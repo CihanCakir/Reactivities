@@ -6,6 +6,8 @@ using System.Threading;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Application.Errors;
+using System.Net;
 
 namespace Application.Activities
 {
@@ -27,6 +29,11 @@ namespace Application.Activities
             public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
             {
                 var activity = await _dataContext.Activities.FindAsync(request.ActivityId);
+
+                if (activity == null)
+                {
+                    throw new RestException(HttpStatusCode.NotFound, new { activity = "Not Found Activity" });
+                }
                 return activity;
             }
 

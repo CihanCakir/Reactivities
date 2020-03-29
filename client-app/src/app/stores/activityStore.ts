@@ -39,8 +39,7 @@ export class ActivityStore {
                     this.activityRegistry.set(activity.activityId, activity);
                 });
                 this.loadingInitial = false;
-            })
-            console.log(this.groupActivitiesByDate(activities));
+            });
         } catch (error) {
             runInAction('load Activities ERROR', () => {
                 this.loadingInitial = false;
@@ -108,7 +107,7 @@ export class ActivityStore {
                 runInAction('Getting Activity ERROR', () => {
                     this.loadingInitial = false;
                 })
-                console.log(error)
+                console.log(error);
             }
 
         }

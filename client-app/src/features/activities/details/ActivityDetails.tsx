@@ -20,16 +20,16 @@ interface DetailParams {
 
 
 // Router Componentprops router üzerinden params taşımaya yarar
-const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match }) => {
+const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
     const activityStore = useContext(ActivityStore);
     const { activity, loadActivity, loadingInitial } = activityStore;
     useEffect(() => {
-        loadActivity(match.params.activityId)
-    }, [loadActivity, match.params.activityId])
+        loadActivity(match.params.activityId);
+    }, [loadActivity, match.params.activityId, history])
 
 
     if (loadingInitial || !activity) return <LoadingComponent content='Loading Activity' />
-
+    if (!activity) return <h2>Activity Not Found</h2>
     return (
         <Grid>
             <Grid.Column width={10}>

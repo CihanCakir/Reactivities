@@ -8,11 +8,11 @@ const HomePage = () => {
             <Container text>
                 <Header as='h1' inverted>
                     <Image size='massive' src='/assets/logo.png' alt='logo' style={{ marginBottom: 12 }} />
-                    Reactivities
+                    Editörün Seçimleri
                 </Header>
-                <Header as='h2' inverted content='Welcome To My Reactivities Page' />
+                <Header as='h2' inverted content='Editörden özel seçimlerle her daima' />
                 <Button as={Link} to='/activities' size='huge' inverted>
-                    Götür beni Reactivitiese
+                    Götür beni editöre
                 </Button>
             </Container>
         </Segment>

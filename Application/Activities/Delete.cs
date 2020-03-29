@@ -7,6 +7,8 @@ using Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using Application.Errors;
+using System.Net;
 
 namespace Application.Activities
 {
@@ -32,7 +34,7 @@ namespace Application.Activities
                 var activity = await _datacontext.Activities.FindAsync(request.ActivityId);
 
                 if (activity == null)
-                    throw new Exception("Could not found activities");
+                    throw new RestException(HttpStatusCode.NotFound, new { activity = "Not Found" });
 
                 _datacontext.Remove(activity);
 

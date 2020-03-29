@@ -37,6 +37,8 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Unit>> CreateActivity(Create.Command command)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             return await _mediator.Send(command);
         }
 

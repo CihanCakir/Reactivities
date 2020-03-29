@@ -20,7 +20,7 @@ const ActivityDetailedChat = () => {
                     <Comment>
                         <Comment.Avatar src='/assets/user.png' />
                         <Comment.Content>
-                            <Comment.Author as='as'>Ati</Comment.Author>
+                            <Comment.Author as='a'>Ati</Comment.Author>
                             <Comment.Metadata>
                                 <div>Today at 5:42</div>
                             </Comment.Metadata>
@@ -33,7 +33,7 @@ const ActivityDetailedChat = () => {
                     <Comment>
                         <Comment.Avatar src='/assets/user.png' />
                         <Comment.Content>
-                            <Comment.Author as='as'>Cico</Comment.Author>
+                            <Comment.Author as='a'>Cico</Comment.Author>
                             <Comment.Metadata>
                                 <div>Today at 5:42</div>
                             </Comment.Metadata>

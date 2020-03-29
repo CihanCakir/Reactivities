@@ -7,6 +7,9 @@ using Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using FluentValidation;
+using Application.Errors;
+using System.Net;
 
 namespace Application.Activities
 {
@@ -23,6 +26,18 @@ namespace Application.Activities
             public string Venue { get; set; }
 
         }
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Title).NotEmpty().MaximumLength(255);
+                RuleFor(x => x.Description).NotEmpty().MaximumLength(255);
+                RuleFor(x => x.Date).NotEmpty();
+                RuleFor(x => x.Venue).NotEmpty();
+                RuleFor(x => x.City).NotEmpty();
+                RuleFor(x => x.Category).NotEmpty();
+            }
+        }
         public class Handler : IRequestHandler<Command>
         {
             private readonly Datacontext _datacontext;
@@ -34,9 +49,11 @@ namespace Application.Activities
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
                 var activity = await _datacontext.Activities.FindAsync(request.ActivityId);
-                if (activity == null)
-                    throw new Exception("Could not found activities");
 
+                if (activity == null)
+                {
+                    throw new RestException(HttpStatusCode.NotFound, new { activity = "Not Found Activity" });
+                }
                 activity.Title = request.Title ?? activity.Title;
                 activity.Description = request.Description ?? activity.Description;
                 activity.Category = request.Category ?? activity.Category;
