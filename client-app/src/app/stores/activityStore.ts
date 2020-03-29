@@ -15,8 +15,20 @@ export class ActivityStore {
     @observable target = '';
 
     @computed get activitiesByDate() {  // tarihe  göre geçmişten bugüne  // Map ten arrraye dönüştürmek ii
-        return Array.from(this.activityRegistry.values()).sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
+        // console.log(this.groupActivitiesByDate(Array.from(this.activityRegistry.values())))
+        return this.groupActivitiesByDate(Array.from(this.activityRegistry.values()))
     }
+    groupActivitiesByDate(activities: IActivity[]) {
+        const sortedActivities = activities.sort(
+            (a, b) => Date.parse(a.date) - Date.parse(b.date)
+        )
+        // Tarihi Başa almamız sağladık aynı yöntemi fiyatlar içinde yapabiliriz.
+        return Object.entries(sortedActivities.reduce((activities, activity) => {
+            const date = activity.date.split('T')[0];
+            activities[date] = activities[date] ? [...activities[date], activity] : [activity]; return activities;
+        }, {} as { [key: string]: IActivity[] }));
+    }
+
     @action loadActivities = async () => {
         this.loadingInitial = true;
         try {
@@ -28,16 +40,13 @@ export class ActivityStore {
                 });
                 this.loadingInitial = false;
             })
-
+            console.log(this.groupActivitiesByDate(activities));
         } catch (error) {
             runInAction('load Activities ERROR', () => {
                 this.loadingInitial = false;
             })
             console.log(error);
-
         }
-
-
     };
 
 
