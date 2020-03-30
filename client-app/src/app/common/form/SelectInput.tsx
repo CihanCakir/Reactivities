@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import { FieldRenderProps } from 'react-final-form';
 import { FormFieldProps, Form, Label, Select } from 'semantic-ui-react';
 
@@ -18,8 +18,8 @@ const SelectInput: React.FC<IProps> = ({
             <Select
                 value={input.value}
                 onChange={(e, data) => input.onChange(data.value)}
-                options={options}
                 placeholder={placeholder}
+                options={options}
             />
             {touched && error && (
                 <Label basic color='red'>
@@ -29,4 +29,5 @@ const SelectInput: React.FC<IProps> = ({
         </Form.Field>
     )
 }
+
 export default SelectInput
