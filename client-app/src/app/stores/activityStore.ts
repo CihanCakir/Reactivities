@@ -20,11 +20,11 @@ export class ActivityStore {
     }
     groupActivitiesByDate(activities: IActivity[]) {
         const sortedActivities = activities.sort(
-            (a, b) => Date.parse(a.date) - Date.parse(b.date)
+            (a, b) => a.date!.getTime() - b.date!.getTime()
         )
         // Tarihi Başa almamız sağladık aynı yöntemi fiyatlar içinde yapabiliriz.
         return Object.entries(sortedActivities.reduce((activities, activity) => {
-            const date = activity.date.split('T')[0];
+            const date = activity.date!.toISOString().split('T')[0];
             activities[date] = activities[date] ? [...activities[date], activity] : [activity]; return activities;
         }, {} as { [key: string]: IActivity[] }));
     }
@@ -35,7 +35,7 @@ export class ActivityStore {
             const activities = await agent.Activities.list();
             runInAction('Loading Activities', () => {
                 activities.forEach(activity => {
-                    activity.date = activity.date.split('.')[0]
+                    activity.date = new Date(activity.date!);
                     this.activityRegistry.set(activity.activityId, activity);
                 });
                 this.loadingInitial = false;
@@ -99,6 +99,7 @@ export class ActivityStore {
             try {
                 activity = await agent.Activities.details(activityId);
                 runInAction('Getting Activity', () => {
+                    activity.date = new Date(activity.date);
                     this.activity = activity;
                     this.loadingInitial = false;
                 })

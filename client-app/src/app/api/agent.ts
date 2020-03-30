@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 axios.defaults.baseURL = 'http://localhost:5000/api';
 
 axios.interceptors.response.use(undefined, error => {
-
+    // İnternet bağlantısı yok ise kullaıcıya bilgilendirme amaçlı
     if (error.message === 'Network Error' && !error.response) {
         toast.error('Network error - make sure API as is running!');
     }

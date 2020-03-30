@@ -22,6 +22,7 @@
   },
   "include": [
     "src",
+    "./typings-custom/**/*.ts",
     "src/app/layout/App.tsx"
   ]
 }
