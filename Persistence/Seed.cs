@@ -1,126 +1,288 @@
-using System.Linq;
-using System.Collections.Generic;
+
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Domain;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 
 namespace Persistence
 {
     public class Seed
     {
-        public static async Task SeedData(Datacontext datacontext, UserManager<AppUser> userManager)
+        public static async Task SeedData(Datacontext context,
+            UserManager<AppUser> userManager)
         {
             if (!userManager.Users.Any())
             {
-                var Users = new List<AppUser>
-               {
-                  new AppUser{
-                     DisplayName = "Cihan",
-                     UserName = "cihan",
-                     Email = "cihan@activities.com"
-                  },
+                var users = new List<AppUser>
+                {
+                    new AppUser
+                    {
+                        Id = "a",
+                        DisplayName = "Bob",
+                        UserName = "bob",
+                        Email = "bob@test.com"
+                    },
+                    new AppUser
+                    {
+                        Id = "b",
+                        DisplayName = "Jane",
+                        UserName = "jane",
+                        Email = "jane@test.com"
+                    },
+                    new AppUser
+                    {
+                        Id = "c",
+                        DisplayName = "Tom",
+                        UserName = "tom",
+                        Email = "tom@test.com"
+                    },
+                };
 
-                  new AppUser{
-                     DisplayName = "Atakan",
-                     UserName = "atakan",
-                     Email = "atakan@activities.com"
-                  },
-
-                  new AppUser{
-                     DisplayName = "Yiğit",
-                     UserName = "yigit",
-                     Email = "yigit@activities.com"
-                  },
-               };
-                foreach (var user in Users)
+                foreach (var user in users)
                 {
                     await userManager.CreateAsync(user, "Pa$$w0rd");
                 }
             }
 
-            if (!datacontext.Activities.Any())
+            if (!context.Activities.Any())
             {
                 var activities = new List<Activity>
-                 {
-                     new Activity
-                     {
-                         Title = "Past Activity",
+                {
+                    new Activity
+                    {
+                        Title = "Past Activity 1",
                         Date = DateTime.Now.AddMonths(-2),
-                        Description = " Activity 2 months Ago",
+                        Description = "Activity 2 months ago",
                         Category = "Drinks",
                         City = "London",
                         Venue = "Pub",
-                     },
-                      new Activity
-                     {
-                         Title = "Past Activity 2",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(-2)
+                            }
+                        }
+                    },
+                    new Activity
+                    {
+                        Title = "Past Activity 2",
                         Date = DateTime.Now.AddMonths(-1),
-                        Description = " Activity 1 months Ago",
-                        Category = "Fun",
-                        City = "Berlin",
-                        Venue = "Theathr",
-                     },
-                        new Activity
-                     {
-                         Title = "Past Activity 3",
-                        Date = DateTime.Now.AddMonths(-3),
-                        Description = " Activity 3 months Ago",
-                        Category = "Cultur",
-                        City = "Istanbul",
-                        Venue = "Cinema",
-                     },
-                        new Activity
-                     {
-                         Title = "Past Activity 1",
-                        Date = DateTime.Now.AddMonths(-1),
-                        Description = " Activity 1 months Ago",
-                        Category = "Fun",
-                        City = "New York",
-                        Venue = "Theathr",
-                     },
-                        new Activity
-                     {
-                         Title = "Past Activity 2",
-                        Date = DateTime.Now.AddMonths(-2),
-                        Description = " Activity 2 months Ago",
-                        Category = "Education",
-                        City = "Manchester",
-                        Venue = "College",
-                     },
-                        new Activity
-                     {
-                         Title = "Past Activity 2",
-                        Date = DateTime.Now.AddMonths(-1),
-                        Description = " Activity 1 months Ago",
-                        Category = "Fun",
-                        City = "Berlin",
-                        Venue = "Theathr",
-                     },
-
-                        new Activity
-                     {
-                         Title = "future Activity 2",
-                        Date = DateTime.Now.AddMonths(2),
-                        Description = " Activity 2 months future",
-                        Category = "Fun",
+                        Description = "Activity 1 month ago",
+                        Category = "Culture",
+                        City = "Paris",
+                        Venue = "The Louvre",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(-1)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths(-1)
+                            },
+                        }
+                    },
+                    new Activity
+                    {
+                        Title = "Future Activity 1",
+                        Date = DateTime.Now.AddMonths(1),
+                        Description = "Activity 1 month in future",
+                        Category = "Music",
                         City = "London",
-                        Venue = "Thames",
-                     },
-                        new Activity
-                     {
-                         Title = "future Activity 8",
-                        Date = DateTime.Now.AddMonths(8),
-                        Description = " Activity 8 months future",
-                        Category = "Fun",
+                        Venue = "Wembly Stadium",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(1)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths(1)
+                            },
+                        }
+                    },
+                    new Activity
+                    {
+                        Title = "Future Activity 2",
+                        Date = DateTime.Now.AddMonths(2),
+                        Description = "Activity 2 months in future",
+                        Category = "Food",
+                        City = "London",
+                        Venue = "Jamies Italian",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(2)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths(2)
+                            },
+                        }
+                    },
+                    new Activity
+                    {
+                        Title = "Future Activity 3",
+                        Date = DateTime.Now.AddMonths(3),
+                        Description = "Activity 3 months in future",
+                        Category = "Drinks",
+                        City = "London",
+                        Venue = "Pub",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(3)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths(3)
+                            },
+                        }
+                    },
+                    new Activity
+                    {
+                        Title = "Future Activity 4",
+                        Date = DateTime.Now.AddMonths(4),
+                        Description = "Activity 4 months in future",
+                        Category = "Culture",
+                        City = "London",
+                        Venue = "British Museum",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(4)
+                            }
+                        }
+                    },
+                    new Activity
+                    {
+                        Title = "Future Activity 5",
+                        Date = DateTime.Now.AddMonths(5),
+                        Description = "Activity 5 months in future",
+                        Category = "Drinks",
+                        City = "London",
+                        Venue = "Punch and Judy",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(5)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths(5)
+                            },
+                        }
+                    },
+                    new Activity
+                    {
+                        Title = "Future Activity 6",
+                        Date = DateTime.Now.AddMonths(6),
+                        Description = "Activity 6 months in future",
+                        Category = "Music",
+                        City = "London",
+                        Venue = "O2 Arena",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(6)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths(6)
+                            },
+                        }
+                    },
+                    new Activity
+                    {
+                        Title = "Future Activity 7",
+                        Date = DateTime.Now.AddMonths(7),
+                        Description = "Activity 7 months in future",
+                        Category = "Travel",
                         City = "Berlin",
-                        Venue = "Cinema",
-                     },
-                 };
-                datacontext.Activities.AddRange(activities);
-                datacontext.SaveChanges();
+                        Venue = "All",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(7)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "c",
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths(7)
+                            },
+                        }
+                    },
+                    new Activity
+                    {
+                        Title = "Future Activity 8",
+                        Date = DateTime.Now.AddMonths(8),
+                        Description = "Activity 8 months in future",
+                        Category = "Drinks",
+                        City = "London",
+                        Venue = "Pub",
+                        UserActivities = new List<UserActivity>
+                        {
+                            new UserActivity
+                            {
+                                AppUserId = "b",
+                                IsHost = true,
+                                DateJoined = DateTime.Now.AddMonths(8)
+                            },
+                            new UserActivity
+                            {
+                                AppUserId = "a",
+                                IsHost = false,
+                                DateJoined = DateTime.Now.AddMonths(8)
+                            },
+                        }
+                    }
+                };
+
+                await context.Activities.AddRangeAsync(activities);
+                await context.SaveChangesAsync();
             }
         }
-
     }
 }

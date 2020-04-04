@@ -7,6 +7,7 @@ using Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using Application.Interfaces;
 
 namespace Application.Activities
 {
@@ -25,9 +26,11 @@ namespace Application.Activities
         public class Handler : IRequestHandler<Command>
         {
             private readonly Datacontext _datacontext;
+            private readonly IUserAccessor _userAccessor;
 
-            public Handler(Datacontext datacontext)
+            public Handler(Datacontext datacontext, IUserAccessor userAccessor)
             {
+                this._userAccessor = userAccessor;
                 this._datacontext = datacontext;
             }
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
@@ -35,7 +38,7 @@ namespace Application.Activities
 
                 var activity = new Activity
                 {
-                    ActivityId = request.ActivityId,
+                    activityId = request.ActivityId,
                     Title = request.Title,
                     Description = request.Description,
                     Category = request.Category,
@@ -44,6 +47,17 @@ namespace Application.Activities
                     Venue = request.Venue
                 };
                 _datacontext.Activities.Add(activity);
+
+
+                var user = await _datacontext.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetCurrentUsername());
+                var attende = new UserActivity
+                {
+                    AppUser = user,
+                    Activity = activity,
+                    IsHost = true,
+                    DateJoined = DateTime.Now
+                };
+                _datacontext.UserActivities.Add(attende);
                 var success = await _datacontext.SaveChangesAsync() > 0;
 
                 if (success) return Unit.Value;
