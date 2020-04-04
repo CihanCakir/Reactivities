@@ -1,26 +1,56 @@
 import React from 'react'
 import { Item, Button, Label, Segment, Icon } from 'semantic-ui-react'
-//import ActivityStore from '../../../app/stores/activityStore';
-//import { observer } from 'mobx-react-lite'
 import { Link } from 'react-router-dom';
 import { IActivity } from '../../../app/models/activity';
 import { format } from 'date-fns';
+import ActivityListItemAttendees from './ActivityListItemAttendees';
+
 const ActivityListItem: React.FC<{ activity: IActivity }> = ({ activity }) => {
-    // const activityStore = useContext(ActivityStore);
-    //const { deleteActivity, submitting, target } = activityStore;
-    // style eklemek için segment group içerisine alıyoruz
+    const host = activity.attendees.filter(x => x.isHost)[0];
 
     return (
         <Segment.Group>
             <Segment>
                 <Item.Group>
                     <Item key={activity.activityId}>
-                        <Item.Image size='tiny' circular src='/assets/user.png' />
+                        <Item.Image size='tiny' circular src={host.image || '/assets/user.png'} />
                         <Item.Content>
-                            <Item.Header as='a'>{activity.title}</Item.Header>
-                            <Item.Description>
-                                Hosted By Jerico
-                            </Item.Description>
+                            <Item.Header as={Link} to={`activities/${activity.activityId}`} >{activity.title}</Item.Header>
+                            <Item.Description>Düzenleyen {host.displayName}</Item.Description>
+
+                            {
+                                activity.isHost &&
+
+                                <Item.Description>
+                                    <Label
+                                        basic
+                                        color='orange'
+                                        content='Etkinlik Sahibisin'
+                                    />
+                                </Item.Description>
+                            }
+                            {
+
+                                activity.isGoing && !activity.isHost &&
+
+                                <Item.Description>
+                                    <Label
+                                        basic
+                                        color='green'
+                                        content='Etkinliğe Katılıyorsun'
+                                    />
+                                </Item.Description>
+                            }
+                            {
+                                !activity.isGoing && !activity.isHost &&
+                                <Item.Description>
+                                    <Label
+                                        basic
+                                        color='red'
+                                        content='Etkinliğe Katılmıyorsun'
+                                    />
+                                </Item.Description>
+                            }
 
 
                             <Item.Extra>
@@ -44,7 +74,11 @@ const ActivityListItem: React.FC<{ activity: IActivity }> = ({ activity }) => {
 
                 <Icon name='marker' /> {activity.venue}, {activity.city}
             </Segment>
-            <Segment secondary> Attendes Will go HERE</Segment>
+            <Segment secondary>
+                <ActivityListItemAttendees
+                    attendees={activity.attendees}
+                />
+            </Segment>
             <Segment clearing>
                 <span> {activity.description} </span>
                 <Button
