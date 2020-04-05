@@ -33,7 +33,8 @@ namespace Application.Profiles
                     DisplayName = user.DisplayName,
                     Username = user.UserName,
                     Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
-                    Photos = user.Photos
+                    Photos = user.Photos,
+                    Bio = user.Bio
                 };
 
             }

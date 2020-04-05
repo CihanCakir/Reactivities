@@ -102,5 +102,19 @@ export default class ProfileStore {
             })
         }
     }
+    // belli bir kısmı güncellenecek ise partial kullanırı reference da kulnıcalak model verili
+    @action updateProfile = async (profile: Partial<IProfile>) => {
+        try {
+            await agent.Profiles.updateProfile(profile);
+            runInAction(() => {
+                if (profile.displayName !== this.rootStore.userStore.user!.displayName) {
+                    this.rootStore.userStore.user!.displayName = profile.displayName!;
+                }
+                this.profile = { ...this.profile!, ...profile }
+            })
+        } catch (error) {
+            toast.error('Problem updating profile')
+        }
+    }
 
 }

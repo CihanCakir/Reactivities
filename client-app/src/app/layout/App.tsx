@@ -56,7 +56,6 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
 
               <Route component={NotFound} />
 
-
             </Switch>
 
           </Container>
