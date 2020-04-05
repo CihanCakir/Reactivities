@@ -9,11 +9,22 @@ export interface IActivity {
     isGoing: boolean;
     isHost: boolean;
     attendees: IAttendee[];
+    comments: IComment[];
 }
 
 export interface IActivityFormValues extends Partial<IActivity> {
     time?: Date;
 }
+
+export interface IComment {
+    id: string;
+    createdAt: Date;
+    body: string;
+    username: string;
+    displayName: string;
+    image: string;
+}
+
 
 export class ActivityFormValues implements IActivityFormValues {
     activityId?: string = undefined;

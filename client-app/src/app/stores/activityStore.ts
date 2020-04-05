@@ -6,7 +6,7 @@ import { history } from '../..';
 import { toast } from 'react-toastify';
 import { RootStore } from './rootStore';
 import { SetActivityProps, createAttnde } from '../common/util/util';
-
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 export default class ActivityStore {
     /* Rooot yolu tanımlaması adminlik içinde bu şekilde düzenlenir büyük ihtimal :) */
@@ -25,6 +25,54 @@ export default class ActivityStore {
     @observable submitting = false;
     @observable target = '';
     @observable loading = false;
+    @observable.ref hubConneection: HubConnection | null = null;
+
+
+
+    @action createHubConnection = (activityId: string) => {
+        this.hubConneection = new HubConnectionBuilder()
+            .withUrl('http://localhost:5000/chat', {
+                accessTokenFactory: () => this.rootStore.commonStore.token!
+            }).configureLogging(LogLevel.Information)
+            .build();
+
+        this.hubConneection
+            .start()
+            .then(() => console.log(this.hubConneection!.state))
+            .then(() => {
+                console.log('Attempting To join  gorup');
+                this.hubConneection!.invoke('AddToGroup', activityId);
+            })
+            .catch(error => console.log('Error establishing connection:', error));
+        this.hubConneection.on('ReceiveComment', comment => { // controller async method ile aynı isimde olması lazım
+            runInAction(() => {
+                this.activity!.comments.push(comment);
+
+            })
+        })
+        this.hubConneection.on('Send', message => {
+            toast.info(message);
+        })
+    };
+    @action stopHubConnection = () => {
+        this.hubConneection!.invoke('RemoveFromGroup', this.activity!.activityId)
+            .then(() => {
+                this.hubConneection!.stop();
+            })
+            .then(() => console.log('Connection Stopped'))
+            .catch(err => console.log(err))
+    }
+
+    @action addComment = async (values: any) => {
+        values.ActivityId = this.activity!.activityId;
+        try {
+            //controller ile aynı isimde olması lazım
+            await this.hubConneection!.invoke('SendComment', values)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     @computed get activitiesByDate() {
         return this.groupActivitiesByDate(Array.from(this.activityRegistry.values()))
@@ -103,6 +151,7 @@ export default class ActivityStore {
             let attendees = [];
             attendees.push(attende);
             activity.attendees = attendees;
+            activity.comments = [];
             activity.isHost = true;
             runInAction('create activity', () => {
                 this.activityRegistry.set(activity.activityId, activity);

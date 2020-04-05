@@ -1,7 +1,22 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useContext, useEffect } from 'react'
 import { Segment, Header, Comment, Form, Button } from 'semantic-ui-react'
+import { RootStoreContext } from '../../../app/stores/rootStore'
+import { Form as FinalForm, Field } from 'react-final-form';
+import { Link } from 'react-router-dom';
+import TextAreaInput from '../../../app/common/form/TextAreaInput';
+import { observer } from 'mobx-react-lite';
+import { formatDistance } from 'date-fns';
 
 const ActivityDetailedChat = () => {
+    const rootStore = useContext(RootStoreContext);
+    const { createHubConnection, stopHubConnection, addComment, activity } = rootStore.activityStore;
+
+    useEffect(() => {
+        createHubConnection(activity!.activityId);
+        return () => {
+            stopHubConnection();
+        }
+    }, [createHubConnection, stopHubConnection, activity])
 
     return (
         <Fragment>
@@ -16,44 +31,42 @@ const ActivityDetailedChat = () => {
             </Segment>
             <Segment attached>
                 <Comment.Group>
+                    {activity && activity.comments && activity.comments.map((comment) => (
+                        <Comment key={comment.id}>
+                            <Comment.Avatar src={comment.image || '/assets/user.png'} />
+                            <Comment.Content>
+                                <Comment.Author as={Link} to={`/profile/${comment.username}`}>{comment.displayName}</Comment.Author>
+                                <Comment.Metadata>
+                                    <div> {formatDistance(comment.createdAt, new Date())} </div>
+                                </Comment.Metadata>
+                                <Comment.Text> {comment.body} </Comment.Text>
 
-                    <Comment>
-                        <Comment.Avatar src='/assets/user.png' />
-                        <Comment.Content>
-                            <Comment.Author as='a'>Ati</Comment.Author>
-                            <Comment.Metadata>
-                                <div>Today at 5:42</div>
-                            </Comment.Metadata>
-                            <Comment.Text> Vay canına </Comment.Text>
-                            <Comment.Actions>
-                                <Comment.Action>Reply</Comment.Action>
-                            </Comment.Actions>
-                        </Comment.Content>
-                    </Comment>
-                    <Comment>
-                        <Comment.Avatar src='/assets/user.png' />
-                        <Comment.Content>
-                            <Comment.Author as='a'>Cico</Comment.Author>
-                            <Comment.Metadata>
-                                <div>Today at 5:42</div>
-                            </Comment.Metadata>
-                            <Comment.Text> Ne sandın Yarram </Comment.Text>
-                            <Comment.Actions>
-                                <Comment.Action>Reply</Comment.Action>
-                            </Comment.Actions>
-                        </Comment.Content>
-                    </Comment>
+                            </Comment.Content>
+                        </Comment>
+                    ))}
 
-                    <Form reply>
-                        <Form.TextArea />
-                        <Button
-                            position='right'
-                            content='Add reply'
-                            labelPosition='right'
-                            icon='edit'
-                            primary
-                        />
-                    </Form>
+                    <FinalForm
+                        onSubmit={addComment}
+                        render={({ handleSubmit, submitting, form }) => (
+                            <Form onSubmit={() => handleSubmit()!.then(() => form.reset())}>
+                                <Field
+                                    name='body'
+                                    component={TextAreaInput}
+                                    rows={2}
+                                    placeholder='Add Your Comment'
+                                />
+                                <Button
+                                    position='right'
+                                    content='Add reply'
+                                    labelPosition='right'
+                                    icon='edit'
+                                    primary
+                                    loading={submitting}
+                                />
+                            </Form>
+                        )}
+                    />
+
 
                 </Comment.Group>
             </Segment>
@@ -63,4 +76,4 @@ const ActivityDetailedChat = () => {
 }
 
 
-export default ActivityDetailedChat
+export default observer(ActivityDetailedChat)

@@ -12,7 +12,7 @@ namespace Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    MyProperty = table.Column<string>(nullable: true),
+                    Body = table.Column<string>(nullable: true),
                     AuthorId = table.Column<string>(nullable: true),
                     activityId = table.Column<Guid>(nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false)
