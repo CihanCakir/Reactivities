@@ -74,8 +74,6 @@ namespace Application.Activities
                 //        .Include(x => x.UserActivities)
                 // .ThenInclude(x => x.AppUser)
                 var activities = await quearable
-                .Include(x => x.UserActivities)
-                .ThenInclude(x => x.AppUser)
                 .Skip(request.Offset ?? 0)
                 .Take(request.Limit ?? 3)
                 .ToListAsync();
