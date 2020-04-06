@@ -16,9 +16,9 @@ namespace API.Controllers
     public class ActivitiesController : BaseController
     {
         [HttpGet]
-        public async Task<ActionResult<List<ActivityDto>>> List(CancellationToken cancellationToken)
+        public async Task<ActionResult<List.ActivitiesEnvelope>> List(int? limit, int? offset)
         {
-            return await Mediator.Send(new List.Query(), cancellationToken);
+            return await Mediator.Send(new List.Query(limit, offset));
         }
 
         [HttpGet("{activityId}")]

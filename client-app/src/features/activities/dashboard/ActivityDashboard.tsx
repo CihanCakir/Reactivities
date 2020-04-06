@@ -1,10 +1,11 @@
-import React, { useContext, useEffect } from 'react'
-import { Grid } from 'semantic-ui-react'
+import React, { useContext, useEffect, useState } from 'react'
+import { Grid, Button, Loader } from 'semantic-ui-react'
 import ActivityList from './ActivityList'
 import { observer } from 'mobx-react-lite'
 import { LoadingComponent } from '../../../app/layout/LoadingComponent';
 import { RootStoreContext } from '../../../app/stores/rootStore';
-
+import InfiniteScroll from 'react-infinite-scroller';
+import ActivityFilters from './ActivityFilters';
 
 // import ActivityDetails from '../details/ActivityDetails'
 // import ActivityForm from '../form/ActivityForm'
@@ -12,31 +13,40 @@ import { RootStoreContext } from '../../../app/stores/rootStore';
 const ActivityDashboard: React.FC = () => {
 
     const rootStore = useContext(RootStoreContext);
-    const { loadActivities, loadingInitial } = rootStore.activityStore;
+    const { loadActivities, loadingInitial, setPage, page, totalPages, } = rootStore.activityStore;
+    const [loadingNext, setLoadingNext] = useState(false);
 
+
+
+    const handleGetNext = () => {
+        setLoadingNext(true);
+        setPage(page + 1);
+        loadActivities().then(() => setLoadingNext(false));
+    }
     // Get ALl Activities
     useEffect(() => {
         loadActivities();
     }, [loadActivities]);
 
-    if (loadingInitial) return <LoadingComponent content='loading Activities ...' />
+    if (loadingInitial && page === 0) return <LoadingComponent content='loading Activities ...' />
     return (
         <Grid>
             <Grid.Column width={10}>
-                <ActivityList />
+                <InfiniteScroll
+                    pageStart={0}
+                    loadMore={handleGetNext}
+                    hasMore={!loadingNext && page + 1 < totalPages}
+                    initialLoad={false}
+                >
+                    <ActivityList />
+                </InfiniteScroll>
+
             </Grid.Column>
             <Grid.Column width={6}>
-
-
-
-
-
-                {/* {activity && !editMode && (<ActivityDetails />)}
-                {editMode &&
-                    <ActivityForm
-                        key={activity && activity.activityId || 0}
-                        activity={activity!}
-                    />} */}
+                <ActivityFilters />
+            </Grid.Column>
+            <Grid.Column width={10}>
+                <Loader active={loadingNext} />
             </Grid.Column>
         </Grid>
     )

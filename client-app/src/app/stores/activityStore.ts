@@ -8,6 +8,8 @@ import { RootStore } from './rootStore';
 import { SetActivityProps, createAttnde } from '../common/util/util';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
+const LIMIT = 2;
+
 export default class ActivityStore {
     /* Rooot yolu tanımlaması adminlik içinde bu şekilde düzenlenir büyük ihtimal :) */
     rootStore: RootStore;
@@ -26,8 +28,15 @@ export default class ActivityStore {
     @observable target = '';
     @observable loading = false;
     @observable.ref hubConneection: HubConnection | null = null;
+    @observable activityCount = 0;
+    @observable page = 0;
 
-
+    @computed get totalPages() {
+        return Math.ceil(this.activityCount / LIMIT);
+    }
+    @action setPage = (page: number) => {
+        this.page = page;
+    }
 
     @action createHubConnection = (activityId: string) => {
         this.hubConneection = new HubConnectionBuilder()
@@ -92,7 +101,8 @@ export default class ActivityStore {
     @action loadActivities = async () => {
         this.loadingInitial = true;
         try {
-            const activities = await agent.Activities.list();
+            const activitiesEnvlope = await agent.Activities.list(LIMIT, this.page);
+            const { activities, activityCount } = activitiesEnvlope;
             const user = this.rootStore.userStore.user!;
 
             runInAction('loading activities', () => {
@@ -100,6 +110,7 @@ export default class ActivityStore {
                     SetActivityProps(activity, user);
                     this.activityRegistry.set(activity.activityId, activity);
                 });
+                this.activityCount = activityCount;
                 this.loadingInitial = false;
             })
         } catch (error) {
