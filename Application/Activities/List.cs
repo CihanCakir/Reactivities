@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using AutoMapper;
 using System.Linq;
+using Application.Interfaces;
 
 namespace Application.Activities
 {
@@ -22,14 +23,21 @@ namespace Application.Activities
         }
         public class Query : IRequest<ActivitiesEnvelope>
         {
-            public Query(int? limit, int? offset)
+            public Query(int? limit, int? offset, bool isGoing, bool isHost, DateTime? startDate)
             {
                 this.Limit = limit;
                 this.Offset = offset;
+                this.IsGoing = isGoing;
+                this.IsHost = isHost;
+                this.StartDate = startDate ?? DateTime.Now;
+
 
             }
             public int? Limit { get; set; }
             public int? Offset { get; set; }
+            public bool IsGoing { get; set; }
+            public bool IsHost { get; set; }
+            public DateTime? StartDate { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, ActivitiesEnvelope>
@@ -37,15 +45,29 @@ namespace Application.Activities
             private readonly Datacontext _context;
             private readonly ILogger _logger;
             private readonly IMapper _mapper;
-            public Handler(Datacontext context, ILogger<List> logger, IMapper mapper)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(Datacontext context, ILogger<List> logger, IMapper mapper, IUserAccessor userAccessor)
             {
+                this._userAccessor = userAccessor;
                 this._mapper = mapper;
                 this._logger = logger;
                 this._context = context;
             }
             public async Task<ActivitiesEnvelope> Handle(Query request, CancellationToken cancellationToken)
             {
-                var quearable = _context.Activities.AsQueryable();
+                var quearable = _context.Activities
+                 .Where(x => x.Date >= request.StartDate)
+                 .OrderBy(x => x.Date)
+                .AsQueryable();
+
+                if (request.IsGoing && !request.IsHost)
+                {
+                    quearable = quearable.Where(x => x.UserActivities.Any(a => a.AppUser.UserName == _userAccessor.GetCurrentUsername()));
+                }
+                if (request.IsHost && !request.IsGoing)
+                {
+                    quearable = quearable.Where(x => x.UserActivities.Any(a => a.AppUser.UserName == _userAccessor.GetCurrentUsername() && a.IsHost));
+                }
 
 
                 // // Eager Loading
