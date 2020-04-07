@@ -7,6 +7,7 @@ import RegisterForm from '../user/RegisterForm'
 
 
 const HomePage = () => {
+    const Token = window.localStorage.getItem('jwt');
     const rootStore = useContext(RootStoreContext);
     const { isLoggedIn, user } = rootStore.userStore;
     const { openModal } = rootStore.modalStore;
@@ -20,7 +21,7 @@ const HomePage = () => {
                     Editörün Seçimleri
                 </Header>
                 {
-                    isLoggedIn && user ? (
+                    isLoggedIn && user && Token ? (
                         <Fragment>
                             <Header as='h2' inverted content={`Welcome Back ${user.displayName}`} />
                             <Button as={Link} to='/activities' size='huge' inverted>

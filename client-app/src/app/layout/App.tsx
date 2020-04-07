@@ -14,6 +14,7 @@ import { RootStoreContext } from '../stores/rootStore';
 import { LoadingComponent } from './LoadingComponent';
 import ModalContainer from '../common/modals/ModalContainer';
 import ProfilePage from '../../features/profiles/ProfilePage';
+import PrivateRoute from './PrivateRoute';
 //import { LoadingComponent } from './LoadingComponent';
 // import ActivityStore from '../stores/activityStore';
 
@@ -42,17 +43,18 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
           <NavBar />
           <Container style={{ marginTop: '7em' }}>
             <Switch>
-              <Route exact path='/activities' component={ActivityDashboard} />
-              <Route path='/activities/:activityId' component={ActivityDetails} />
+
+              <PrivateRoute exact path='/activities' component={ActivityDashboard} />
+              <PrivateRoute path='/activities/:activityId' component={ActivityDetails} />
               {/* Eğer Ki bir route 2 işi bir component yapacaksa path dizi olarak tanımlanır aşağıda edit ve create aynı componentta olduğu  gibi */}
-              <Route
+              <PrivateRoute
                 key={location.key}
                 path={['/createActivity', '/manage/:activityId']}
                 component={ActivityForm}
               />
-              <Route path='/profile/:username' component={ProfilePage} />
+              <PrivateRoute path='/profile/:username' component={ProfilePage} />
 
-              <Route path='/login' component={LoginForm} />
+              <PrivateRoute path='/login' component={LoginForm} />
 
               <Route component={NotFound} />
 
